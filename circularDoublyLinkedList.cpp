@@ -237,12 +237,6 @@ public:
             }
             cout << current->data << endl;
         }
-    void print(){
-        cout << head->data << ' ' << head->next->data << ' ' << head->prev->data << endl;
-        Node<t> *node = head->next ;
-        cout << node->data << ' ' << node->next->data << ' ' << node->prev->data << endl;
-        cout << tail->data << ' ' << tail->next->data << ' ' << tail->prev->data << endl;
-    }
 };
 
 signed main() {
