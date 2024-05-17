@@ -176,7 +176,7 @@ public:
     }
     void PrintSortedInDescendingOrder(string type) {
         HeapSort(type);
-        for (int i = 0; i < MaxSize - deleted; ++i) {
+        for (int i = 0; i < MaxSize - deleted - 1; ++i) {
             arr[i].Print() ;
         }
         cout << endl;
