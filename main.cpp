@@ -231,7 +231,7 @@ void readItems(istream& fileStream, BST& bst, string attribute) {
 int main() {
     BST bst;
     BST bst1;
-    ifstream inputFile("items.txt");
+    ifstream inputFile("input.txt");
     string attribute ;
 
     cout << "Enter the attribute by which you want to compare items in the tree:" << endl
