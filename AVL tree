@@ -1,0 +1,528 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Item
+{
+private:
+    string Name;
+    string Category;
+    int Price;
+
+public:
+    Item();
+    Item(string, string, int);
+    void setItemName(string);
+    void setItemCategory(string);
+    void setItemPrice(int);
+    string getItemName() const;
+    string getItemCategory() const;
+    int getItemPrice() const;
+    bool operator<(const Item &);
+    void Print();
+};
+Item ::Item()
+{
+    Name = "";
+    Category = "";
+    Price = 0;
+}
+Item ::Item(string name, string category, int price)
+{
+    Name = name;
+    Category = category;
+    Price = price;
+}
+bool Item ::operator<(const Item &other)
+{
+    return Name < other.Name;
+}
+void Item ::Print()
+{
+    cout << "Item Name : " << Name << endl;
+    cout << "Item Category : " << Category << endl;
+    cout << "Item Price : " << Price << endl;
+}
+void Item ::setItemName(string name)
+{
+    this->Name = name;
+}
+void Item ::setItemCategory(string category)
+{
+    this->Category = category;
+}
+void Item ::setItemPrice(int price)
+{
+    this->Price = price;
+}
+string Item ::getItemCategory() const
+{
+    return this->Category;
+}
+string Item ::getItemName() const
+{
+    return this->Name;
+}
+int Item ::getItemPrice() const
+{
+    return this->Price;
+}
+// ##########################  start of avl   #######################################
+
+// create node           (done)
+// get height             (done)
+// get balance factor    (done)
+// update height          (done)
+// rotate right           (done)
+// rotate left            (done)
+// rotate left right       (done)
+// rotate right left        (done)
+// rebalance               (doen)
+
+struct node
+{
+    Item item;
+    int height;
+    node *left;
+    node *right;
+};
+
+node *newnode(Item item)
+{
+    node *newnode = new node();
+    newnode->item = item;
+    newnode->height = 1;
+    newnode->left = nullptr;
+    newnode->right = nullptr;
+    return newnode;
+}
+int getheight(node *node)
+{
+    if (node != nullptr)
+    {
+        return node->height;
+    }
+    else
+    {
+        return 0;
+    }
+}
+void updateHeight(node *node)
+{
+    node->height = max(getheight(node->right), getheight(node->left)) + 1;
+}
+int balanceFactor(node *node)
+{
+    int factor = getheight(node->left) - getheight(node->right);
+    return factor;
+}
+node *rotateRight(node *q)
+{
+    node *p = q->left;
+    q->left = p->right;
+    p->right = q;
+    updateHeight(q);
+    updateHeight(p);
+    return p;
+}
+node *rotateLeft(node *p)
+{
+    node *q = p->right;
+    p->right = q->left;
+    q->left = p;
+    updateHeight(p);
+    updateHeight(q);
+    return q;
+}
+node *rebalance(node *node)
+{
+    int bFactor = balanceFactor(node);
+    if (bFactor > 1)
+    { // the left branch has an issue
+        if (balanceFactor(node->left) >= 0)
+        { // if two node are left left
+            return rotateRight(node);
+        }
+        else
+        { // if two node are left right  (rotate left then right)
+            node->left = rotateLeft(node->left);
+            node = rotateLeft(node);
+        }
+    }
+    else if (bFactor < -1)
+    { // the issue in the right branch
+        if (balanceFactor(node->right) <= 0)
+        { // there are two nodes at the right
+            return rotateLeft(node);
+        }
+        else
+        { // if two node the first right and the second is left rotate (right then left)
+            node->right = rotateRight(node->right);
+            node = rotateLeft(node);
+        }
+    }
+    return node;
+}
+
+// ######################### read from file and insert  ############################
+
+// insert by name                  (done)
+// insert by price                 (done)
+// Display the item data normally   (done)
+
+node* InsertItem(node* node, Item item , string attribute){
+    if (node == nullptr)
+    {
+        return newnode(item);
+    }
+    if (attribute=="Name"){
+    if (item.getItemName() < node->item.getItemName())
+        {
+            node->left = InsertItem(node->left, item,attribute);
+        }
+    else if (item.getItemName() > node->item.getItemName())
+        {
+            node->right = InsertItem(node->right, item,attribute);
+        }
+    else
+        {
+            cout << "Item already exists in the tree." << endl;
+            return node;
+        }
+    updateHeight(node);
+
+    return rebalance(node);
+
+    }
+    else if (attribute=="Price"){
+        if (item.getItemPrice() < node->item.getItemPrice())
+    {
+        node->left = InsertItem(node->left, item,attribute);
+    }
+    else if (item.getItemPrice() > node->item.getItemPrice())
+    {
+        node->right = InsertItem(node->right, item,attribute);
+    }
+    else
+    {
+        cout << "Item already exists in the tree." << endl;
+        return node;
+    }
+    updateHeight(node);
+
+    return rebalance(node);
+
+    }
+    else if (attribute=="Category"){
+        if (item.getItemCategory() < node->item.getItemCategory())
+    {
+        node->left = InsertItem(node->left, item,attribute);
+    }
+    else if (item.getItemCategory() > node->item.getItemCategory())
+    {
+        node->right = InsertItem(node->right, item,attribute);
+    }
+    updateHeight(node);
+
+    return rebalance(node);
+    }
+
+}
+
+void displayNormal(node *node)
+{
+    if (node == nullptr)
+    {
+        return;
+    }
+
+    cout << node->item.getItemName() << " " << node->item.getItemCategory() << " " << node->item.getItemPrice() << endl;
+    displayNormal(node->left);
+    displayNormal(node->right);
+}
+//////////////////////////////////////
+void displayASCe(node* node,string attribute){
+    if (node==nullptr)
+        return;
+
+    displayASCe(node->left,attribute);
+    node->item.Print();
+    displayASCe(node->right,attribute);
+
+}
+void displayDesc(node* node,string attribute){
+    if (node==nullptr)
+        return;
+    displayDesc(node->right,attribute);
+    node->item.Print();
+    displayDesc(node->left,attribute);
+}
+/////////////////////////////////////
+
+node* readItems(istream& fileStream, node* node, string attribute) {
+    int numItems;
+    fileStream >> numItems;
+
+    string line;
+    getline(fileStream, line);
+
+    for (int i = 0; i < numItems; ++i) {
+        string name, category;
+        int price;
+        getline(fileStream, name);
+        getline(fileStream, category);
+        fileStream >> price;
+        getline(fileStream, line);
+        Item item(name,category, price);
+        node = InsertItem(node,item,attribute);
+    }
+    return node;
+}
+/////////////////////////////
+// delete the entire AVL
+void deleteAllNodes(node* node){
+    if (node == NULL)
+       return;
+
+   deleteAllNodes(node->left);
+   deleteAllNodes(node->right);
+
+   delete node;
+}
+////////////////////////////////
+// the remove function:
+node *findMin(node *node) {
+    while (node->left != nullptr) {
+        node = node->left;
+    }
+    return node;
+}
+
+node *deleteNode(node *root, Item item, string attribute) {
+    if (root == nullptr) {
+        return nullptr;
+    }
+
+    if (attribute == "name")
+        {
+            if (item.getItemName() < root->item.getItemName())
+            {
+                root->left = deleteNode(root->left, item, attribute);
+            }
+            else if (item.getItemName() > root->item.getItemName())
+            {
+                root->right = deleteNode(root->right, item, attribute);
+            }
+            else //found
+            {
+                if (root->left == nullptr || root->right == nullptr)
+                {
+                    node* temp = root->left ? root->left : root->right;
+                    if (temp == nullptr)
+                    {
+                        temp = root;
+                        root = nullptr;
+                    }
+                    else
+                    {
+                        *root = *temp;
+                    }
+                    delete temp;
+                }
+                else //two children
+                {
+                    root->item = findMin(root->right)->item;
+                    root->right = deleteNode(root->right, root->item, attribute);
+                }
+            }
+        } else if (attribute == "price") {
+        if (item.getItemPrice() < root->item.getItemPrice()) {
+            root->left = deleteNode(root->left, item, attribute);
+        } else if (item.getItemPrice() > root->item.getItemPrice()) {
+            root->right = deleteNode(root->right, item, attribute);
+        } else {
+            // Node to be deleted found
+            if (root->left == nullptr || root->right == nullptr) {
+                node *temp = root->left ? root->left : root->right;
+                if (temp == nullptr) {
+                    temp = root;
+                    root = nullptr;
+                } else {
+                    *root = *temp;  // Copy the contents of the non-empty child
+                }
+                delete temp;
+            } else {
+                node *temp = findMin(root->right);
+                root->item = temp->item;
+                root->right = deleteNode(root->right, temp->item, "price");
+            }
+        }
+    } else if (attribute == "category") {
+        if (item.getItemCategory() < root->item.getItemCategory()) {
+            root->left = deleteNode(root->left, item, attribute);
+        } else if (item.getItemCategory() > root->item.getItemCategory()) {
+            root->right = deleteNode(root->right, item, attribute);
+        } else {
+            // Node to be deleted found
+            if (root->left == nullptr || root->right == nullptr) {
+                node *temp = root->left ? root->left : root->right;
+                if (temp == nullptr) {
+                    temp = root;
+                    root = nullptr;
+                } else {
+                    *root = *temp;  // Copy the contents of the non-empty child
+                }
+                delete temp;
+            } else {
+                node *temp = findMin(root->right);
+                root->item = temp->item;
+                root->right = deleteNode(root->right, temp->item, "category");
+            }
+        }
+    }
+
+    if (root == nullptr) {
+        return root;
+    }
+
+    updateHeight(root);
+    return rebalance(root);
+}
+///////////////////////////////
+
+int main()
+{
+    node *root=nullptr;
+
+    ifstream inputFile("items.txt");
+    string attribute ;
+
+    cout << "Enter the attribute by which you want to compare items in the tree:" << endl
+         << "Options: Name, Price, or Category" << endl;
+    cin>>attribute;
+    bool flag=true;
+    while(flag){
+    if (attribute != "Price" && attribute != "Name" && attribute != "Category") {
+        cout << "Invalid attribute ,please re-enter one of the options above" << endl;
+        cin >> attribute;
+    }
+    else {
+        flag=false;
+    }
+    }
+
+
+    if (inputFile.is_open()) {
+        root = readItems(inputFile,root,attribute);
+        inputFile.seekg(0, ios::beg);
+
+    } else {
+        cout << "Unable to open file" << endl;
+    }
+    while (true){
+        cout << "1. Add item " << endl << "2. Remove item " << endl
+             << "3. Display the item data normally" << endl
+             << "4. Display all the items sorted by their name ascending" << endl
+             << "5. Display all the items sorted by their name descending" << endl
+             << "6. Display all the items sorted by their prices ascending" << endl
+             << "7. Display all the items sorted by their prices descending" << endl
+             << "8. Exit" << endl;
+
+        int choice;
+        cin >> choice;
+        if (choice==1){
+            string name, category;
+            cout<<"Please enter the item attributes:\n";
+            cout<<"The name : "; cin>>name;
+            cout<<"The category : "; cin>>category;
+            cout<<"The price : "; int price; cin>>price;
+            root=InsertItem(root, Item(name,category,price),attribute);
+            cout<<"The item added succesfully\n";
+        }
+        else if (choice==2){
+            string name, category;
+            cout<<"Please enter the item attributes to be deleted :\n";
+            cout<<"The name : "; cin>>name;
+            cout<<"The category : "; cin>>category;
+            cout<<"The price : "; int price; cin>>price;
+
+             root = deleteNode(root , Item(name,category,price) , attribute);
+        }
+        else if (choice == 3){
+            cout << "Display the item data of AVL tree normally:" << endl;
+            displayNormal(root);
+
+        }
+        else if(choice == 4){
+                if (attribute!="Name"){
+                    deleteAllNodes(root);
+                    root= nullptr;
+                    root = readItems(inputFile,root,"Name");
+                    inputFile.clear();
+                    inputFile.seekg(0, ios::beg);
+                    cout<<"Items sorted by Name and printed in ascending order:\n";
+                    displayASCe(root,"Name");
+
+                }
+                else{
+                    displayASCe(root,"Name");
+                }
+
+
+        }
+        else if (choice==5){
+            if (attribute!="Name"){
+                    deleteAllNodes(root);
+                    root = nullptr;
+                    root = readItems(inputFile,root,"Name");
+                    inputFile.clear();
+                    inputFile.seekg(0, ios::beg);
+                    cout<<"Items sorted by Name and printed in descending order:\n";
+                    displayDesc(root,"Name");
+
+                }
+                else{
+                    displayDesc(root,"Name");
+                }
+
+            }
+
+         else if (choice==6){
+            if (attribute!="Price"){
+                    deleteAllNodes(root);
+                    root=nullptr;
+                    root = readItems(inputFile,root,"Price");
+                    inputFile.clear();
+                    inputFile.seekg(0, ios::beg);
+                    cout<<"Items sorted by Price and printed in ascending order:\n";
+                    displayASCe(root,"Price");
+
+                }
+                else{
+                    displayASCe(root,"Price");
+                }
+         }
+         else if (choice==7){
+                    if (attribute!="Price"){
+                    deleteAllNodes(root);
+                    root=nullptr;
+                    root = readItems(inputFile,root,"Price");
+                    inputFile.clear();
+                    inputFile.seekg(0, ios::beg);
+                    cout<<"Items sorted by price and printed in descending order:\n";
+                    displayDesc(root,"Price");
+
+                }
+                else{
+                    displayDesc(root,"Price");
+                }
+         }
+         else if (choice==8){
+            break;
+         }
+         else {
+            cout<<"invalid choice number please re-enter a valid choice number";
+         }
+    }
+    inputFile.close();
+    }
+
