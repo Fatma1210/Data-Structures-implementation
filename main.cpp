@@ -290,7 +290,7 @@ int main() {
         else if(choice==4){
             if (attribute == "Price" || attribute == "Category") {
                 bst.DeleteAllNode();
-                ifstream inputFile("items.txt");
+                ifstream inputFile("input.txt");
                 if (inputFile.is_open()) {
                     readItems(inputFile, bst, "Name");
                     inputFile.clear();
@@ -308,7 +308,7 @@ int main() {
         else   if(choice==5){
             if (attribute == "Price" || attribute == "Category") {
                 bst.DeleteAllNode();
-                ifstream inputFile("items.txt");
+                ifstream inputFile("input.txt");
                 if (inputFile.is_open()) {
                     readItems(inputFile, bst, "Name");
                     inputFile.clear();
@@ -326,7 +326,7 @@ int main() {
         else  if(choice==6){
        if (attribute == "Name"|| attribute == "Category") {
            bst.DeleteAllNode();
-           ifstream inputFile("items.txt");
+           ifstream inputFile("input.txt");
            if (inputFile.is_open()) {
                readItems(inputFile, bst, "Price");
                inputFile.clear();
@@ -345,7 +345,7 @@ int main() {
    else if(choice==7){
             if(attribute=="Name"|| attribute == "Category"){
             bst.DeleteAllNode();
-            ifstream inputFile("items.txt");
+            ifstream inputFile("input.txt");
             if (inputFile.is_open()) {
                 readItems(inputFile, bst, "Price");
                 inputFile.clear();
