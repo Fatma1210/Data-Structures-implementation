@@ -8,7 +8,7 @@ class ArrayBasedList{
 
     T* list; // array 
     int maxSize; // maximum capacity
-    int length; // number of elements that existed in the array
+    int length; // number of elements that existed in the array sssss
 
     public:
 
